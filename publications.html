@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Publications | APEX Lab | Clemson IE</title>
+
+  <style>
+    :root {
+      --orange: #F56600;
+      --purple: #522D80;
+      --white: #FFFFFF;
+      --ink: #333333;
+    }
+
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: Calibri, sans-serif;
+      background: var(--white);
+      color: var(--ink);
+      overflow-x: hidden;
+      line-height: 1.4;
+    }
+
+    h1.site, h2, h3, h4, h5 { font-family: Tahoma, sans-serif; }
+
+    .wrap { 
+      max-width: 1200px; 
+      margin: 0 auto; 
+      padding: 0 24px; 
+    }
+
+    /* Header */
+    .header {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: var(--orange);
+      color: var(--white);
+      box-shadow: 0 4px 10px rgba(0,0,0,.12);
+    }
+
+    .header-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 0;
+      gap: 5px;
+    }
+
+    /* APEX Logo - Left */
+    .apex-logo {
+      display: flex;
+      align-items: center;
+      margin-left: -24px;
+    }
+    
+    .apex-logo img {
+      height: 85px;
+      margin-right: 5px;
+      transition: transform 0.3s ease;
+      display: block;
+    }
+
+    .apex-logo img:hover {
+      transform: scale(1.05);
+    }
+
+    h1.site { 
+      font-weight: 800; 
+      margin: 0; 
+      font-size: 1.75rem; 
+      flex: 1;
+      text-align: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      white-space: nowrap;
+    }
+
+    .nav {
+      display: flex;
+      gap: 8px;
+    }
+
+    .nav a {
+      color: var(--white);
+      text-decoration: none;
+      padding: 12px 20px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      border-radius: 8px;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      background: transparent;
+      letter-spacing: 0.3px;
+    }
+
+    .nav a::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: var(--white);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      z-index: -1;
+    }
+
+    .nav a:hover {
+      transform: translateY(-2px);
+      color: var(--orange);
+      text-decoration: none;
+    }
+
+    .nav a:hover::before {
+      opacity: 1;
+    }
+
+    .nav a:active {
+      transform: translateY(0);
+    }
+
+    /* Publications Section */
+    .publications-section {
+      padding: 30px 0;
+    }
+
+    .publications-section .wrap {
+      padding: 0 24px;
+    }
+
+    .publications-section h2 {
+      text-align: center;
+      color: var(--purple);
+      font-size: 2rem;
+      margin-bottom: 8px;
+    }
+
+    .section-subtitle {
+      text-align: center;
+      color: #666;
+      font-size: 1rem;
+      margin-bottom: 20px;
+    }
+
+    /* Filter Controls */
+    .filter-controls {
+      background: #f8f8f8;
+      padding: 20px;
+      border-radius: 8px;
+      margin-bottom: 30px;
+      border: 1px solid #ddd;
+    }
+
+    .filter-row {
+      display: flex;
+      gap: 15px;
+      flex-wrap: wrap;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+
+    .filter-row:last-child {
+      margin-bottom: 0;
+    }
+
+    .filter-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .filter-group label {
+      font-weight: 600;
+      color: var(--purple);
+      font-size: 0.95rem;
+    }
+
+    .filter-group select,
+    .filter-group input {
+      padding: 8px 12px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 0.9rem;
+      min-width: 150px;
+    }
+
+    .filter-group input[type="text"] {
+      min-width: 300px;
+    }
+
+    .filter-buttons {
+      display: flex;
+      gap: 10px;
+    }
+
+    .btn-filter {
+      padding: 8px 16px;
+      border: none;
+      border-radius: 4px;
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: all 0.3s ease;
+    }
+
+    .btn-reset {
+      background: var(--orange);
+      color: white;
+    }
+
+    .btn-reset:hover {
+      background: #d45500;
+    }
+
+    .results-count {
+      text-align: center;
+      color: #666;
+      font-size: 0.95rem;
+      margin-bottom: 20px;
+      font-style: italic;
+    }
+
+    /* Publication Items */
+    .publications-list {
+      display: flex;
+      flex-direction: column;
+      gap: 25px;
+    }
+
+    .publication-item {
+      padding: 20px;
+      margin-bottom: 25px;
+      border-left: 3px solid var(--orange);
+      background: #f9f9f9;
+    }
+
+    .publication-item.hidden {
+      display: none;
+    }
+
+    .pub-authors {
+      font-weight: 600;
+      color: var(--ink);
+      margin-bottom: 8px;
+      font-size: 1rem;
+    }
+
+    .pub-title {
+      color: var(--purple);
+      margin-bottom: 8px;
+      font-size: 1.05rem;
+      font-weight: 600;
+    }
+
+    .pub-journal {
+      color: #666;
+      font-size: 0.95rem;
+      margin-bottom: 12px;
+    }
+
+    .pub-year {
+      display: inline-block;
+      background: var(--orange);
+      color: var(--white);
+      padding: 2px 8px;
+      border-radius: 3px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-left: 8px;
+    }
+
+    .pub-abstract {
+      color: var(--ink);
+      font-size: 0.95rem;
+      line-height: 1.6;
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px solid #ddd;
+    }
+
+    .pub-link {
+      display: inline-block;
+      margin-top: 10px;
+      color: var(--orange);
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+
+    .pub-link:hover {
+      text-decoration: underline;
+    }
+
+    /* Footer */
+    footer {
+      background: var(--purple);
+      color: var(--white);
+      padding: 40px 0;
+      text-align: center;
+      margin-top: 30px;
+    }
+
+    footer p {
+      margin: 6px 0;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .filter-row {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .filter-group {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .filter-group input[type="text"] {
+        min-width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="wrap header-inner">
+      <!-- APEX Logo - Left -->
+      <div class="apex-logo">
+        <img src="images/apex_logo.png" alt="APEX Lab Logo">
+      </div>
+      
+      <!-- Center Content: Title and Navigation -->
+      <div style="flex: 1; display: flex; flex-direction: column; align-items: center; gap: 12px;">
+        <h1 class="site">Adaptive Performance in Complex Systems (APEX Lab)</h1>
+        <nav class="nav">
+          <a href="index.html#profile">Profile</a>
+          <a href="people.html">People</a>
+          <a href="index.html#research">Research</a>
+          <a href="#news">News</a>
+          <a href="#projects">Projects</a>
+          <a href="#resources">Resources</a>
+          <a href="publications.html">Publications</a>
+        </nav>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="publications-section">
+      <div class="wrap">
+        <h2>Publications</h2>
+        <p class="section-subtitle">Research contributions from APEX Lab</p>
+
+        <!-- Filter Controls -->
+        <div class="filter-controls">
+          <div class="filter-row">
+            <div class="filter-group">
+              <label for="yearFilter">Year:</label>
+              <select id="yearFilter">
+                <option value="all">All Years</option>
+                <option value="2025">2025</option>
+                <option value="2024">2024</option>
+                <option value="2023">2023</option>
+                <option value="2022">2022</option>
+                <option value="2021">2021</option>
+                <option value="2020">2020</option>
+                <option value="accepted">Accepted</option>
+              </select>
+            </div>
+
+            <div class="filter-group">
+              <label for="typeFilter">Type:</label>
+              <select id="typeFilter">
+                <option value="all">All Types</option>
+                <option value="journal">Journal</option>
+                <option value="conference">Conference</option>
+              </select>
+            </div>
+
+            <div class="filter-group">
+              <label for="searchFilter">Search:</label>
+              <input type="text" id="searchFilter" placeholder="Search by title, author, or keyword...">
+            </div>
+
+            <div class="filter-buttons">
+              <button class="btn-filter btn-reset" onclick="resetFilters()">Reset All</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="results-count" id="resultsCount"></div>
+
+        <div class="publications-list">
+          
+          <!-- Dr. Hegde First-Author Papers -->
+          <div class="publication-item" data-year="2023" data-type="journal">
+            <div class="pub-authors">Hegde, S., Larsen, E., Torbett, O., Ponnala, S., Pohl, E., Sze, R., Schaeubinger, M.</div>
+            <div class="pub-title">A proactive learning approach to building adaptive capacity during COVID-19: A radiology case study</div>
+            <div class="pub-journal">Applied Ergonomics, 110 <span class="pub-year">2023</span></div>
+            <div class="pub-abstract">
+              The COVID-19 pandemic challenged organizations to adapt under uncertainty and time pressure, with no preexisting protocols or guidelines available. For organizations to learn to adapt effectively, there is a need to understand the perspectives of the frontline workforce involved in everyday operations. This study implemented a survey-tool to evaluate frontline adaptation experiences in a radiology department during the early months of COVID-19, coded responses for adaptive strategies, and identified themes for building adaptive capacity. Results showed key processes of communication, role symmetry, rapid training, and reflective practice that supported resilience and suggest design implications for scaling proactive learning in complex healthcare settings.
+            </div>
+            <a href="https://doi.org/10.1016/j.apergo.2022.104009" class="pub-link" target="_blank">View Publication →</a>
+          </div>
+
+          <div class="publication-item" data-year="2020" data-type="journal">
+            <div class="pub-authors">Hegde, S., Hettinger, A. Z., Fairbanks, R. J., Wreathall, J., Krevat, S. A., Jackson, C. D., & Bisantz, A. M.</div>
+            <div class="pub-title">Qualitative findings from a pilot stage implementation of a novel organizational learning tool toward operationalizing the Safety-II paradigm in health care</div>
+            <div class="pub-journal">Applied Ergonomics, 82 <span class="pub-year">2020</span></div>
+            <div class="pub-abstract">
+              'Safety-II' is a new approach to safety, which emphasizes learning proactively about how safety and efficacy are achieved in everyday frontline work. Previous research developed a new lesson-sharing tool designed based on the Safety-II approach: Resilience Engineering Tool to Improve Patient Safety (RETIPS). The tool comprises questions designed to elicit narratives of adaptations that have contributed to effectiveness in care delivery. The purpose of this study is to revise and validate the design of RETIPS. The tool was revised based on feedback of clinicians at a large multi-specialty hospital, resulting in a version customized for anesthesia residents, RETIPS-AnRes. RETIPS-AnRes was administered on a pilot-basis to anesthesia resident groups for a limited period of time. A review of the reports obtained shows a strong alignment of responses with the conceptual basis of the tool, i.e. learning about how things go well in everyday work. The exemplars include both, specific instances of successful patient care, as well as generic routines that contribute to safe and/or effective care delivery. These findings support RETIPS as a tool to operationalize the Safety-II paradigm in healthcare. Lessons and implications for implementation on a wider scale are discussed.
+            </div>
+            <a href="https://pubmed.ncbi.nlm.nih.gov/31450045/" class="pub-link" target="_blank">View Publication →</a>
+          </div>
+
+          <div class="publication-item" data-year="2020" data-type="journal">
+            <div class="pub-authors">Hegde, S., Hettinger, A. Z., Fairbanks, R. J., Wreathall, J., Krevat, S. A., Jackson, C. D., & Bisantz, A. M.</div>
+            <div class="pub-title">Knowledge elicitation to understand resilience: A method and findings from a health care case study</div>
+            <div class="pub-journal">Journal of Cognitive Engineering and Decision Making, 14(1), 75-95 <span class="pub-year">2020</span></div>
+            <div class="pub-abstract">
+              Resilience engineering (RE) has ushered in new approaches to learning about work in complex sociotechnical systems. In terms of improving safety, RE marks a shift from the traditional approach of retrospectively investigating adverse events, toward learning proactively about patterns in everyday work, including how things go well. This study applied the RE framework to the health care domain, by developing and implementing a new knowledge-elicitation protocol to learn about how frontline care providers achieve safe and effective patient care in their everyday work. Eighteen participants, including physicians, nurses, residents, and clinical leaders from a range of specialties, were interviewed using the new protocol. Qualitative analysis of the data revealed multiple themes and patterns which underlie resilient functioning of individuals, teams, and the organization as a whole. Further, a Resilience Mapping Framework (RMF) was developed based on major thematic categories to systematically represent and map various resilient capabilities—monitoring, anticipating, responding, and learning—across different levels of system scale, from the individual to the organizational.
+            </div>
+            <a href="https://journals.sagepub.com/doi/full/10.1177/1555343419877719" class="pub-link" target="_blank">View Publication →</a>
+          </div>
+
+          <div class="publication-item" data-year="2019" data-type="journal">
+            <div class="pub-authors">Hegde, S., Jackson, C. D.</div>
+            <div class="pub-title">Endoscopic submucosal dissection: A cognitive task analysis framework toward training design</div>
+            <div class="pub-journal">Surgical Endoscopy <span class="pub-year">2019</span></div>
+            <div class="pub-abstract">
+              Background: Endoscopic Submucosal Dissection (ESD) training in Western countries is limited by insufficient expert instructors. Cognitive Task Analysis (CTA) can help articulate expert decision-making and skill structure. We conducted CTA interviews with expert endoscopists performing ESD and identified cognitive and sensory cues, decision points, and error recoveries. Based on this, we proposed a framework for training design that includes cognitive-skills modules, simulation tasks, and targeted feedback. The findings have implications for improved curricula in advanced endoscopy training.
+            </div>
+            <a href="https://link.springer.com/article/10.1007/s00464-019-06822-x" class="pub-link" target="_blank">View Publication →</a>
+          </div>
+
+          <div class="publication-item" data-year="2015" data-type="journal">
+            <div class="pub-authors">Hegde, S., McGeorge, N. M., Berg, R. L., Guarrera-Schick, T. K., LaVergne, D. T., Casucci, S. N., Hettinger, A. Z., Clark, L. N., Lin, L., Fairbanks, R. J., Benda, N. C., Wears, R. L., Perry, S. J., Bisantz, A. M.</div>
+            <div class="pub-title">Assessment of Innovative Emergency Department Information Displays in a Clinical Simulation Center</div>
+            <div class="pub-journal">Journal of Cognitive Engineering and Decision Making, 9(4), 329-346 <span class="pub-year">2015</span></div>
+            <div class="pub-abstract">
+              Purpose: To evaluate the usability and decision-making impact of novel information displays designed for Emergency Department physicians in a high-fidelity simulation environment. Method: Seventy physicians participated in four clinical scenarios, using either standard displays or experimental displays with advanced visualizations. We measured decision response times, error rates, and subjective workload. Results: The experimental displays showed improved situational awareness, shorter response times, and lower error rates. Key usability factors included display layout, colour coding, and integration of alerts. Conclusion: This study supports design of advanced information displays that align with cognitive workflows in high-stress ED environments.
+            </div>
+            <a href="https://doi.org/10.1177/1555343415575103" class="pub-link" target="_blank">View Publication →</a>
+          </div>
+
+          <div class="publication-item" data-year="2015" data-type="conference">
+            <div class="pub-authors">Hegde, S.</div>
+            <div class="pub-title">Knowledge Elicitation for Resilience Engineering in Health Care</div>
+            <div class="pub-journal">Proceedings of the Human Factors and Ergonomics Society Annual Meeting, 59(1), 175-179 <span class="pub-year">2015</span></div>
+            <div class="pub-abstract">
+              This paper presents an interview-script and knowledge elicitation protocol designed to capture how healthcare providers adapt in everyday work. Using Hollnagel's Resilience Analysis Grid (RAG), interviews were conducted with physicians and nurses to identify monitoring, anticipating, responding and learning activities. The final script is validated and can support resilience engineering analysis in healthcare organizations.
+            </div>
+            <a href="https://www.researchgate.net/publication/283662988_Knowledge_Elicitation_for_Resilience_Engineering_in_Health_Care" class="pub-link" target="_blank">View Publication →</a>
+          </div>
+
+          <!-- Other Publications by Year -->
+          <div class="publication-item" data-year="2025" data-type="journal">
+            <div class="pub-authors">Foster, S., Hegde, S., Pirrallo, R., Taaffe, K., & Liu, D.</div>
+            <div class="pub-title">Reviewing the validity of existing measures of emergency-physician workload — A scoping review</div>
+            <div class="pub-journal">International Journal for Quality in Health Care, mzaf085 <span class="pub-year">2025</span></div>
+            <div class="pub-abstract">
+              This scoping review examines current instruments used to quantify emergency-physician workload across cognitive, physical, and temporal dimensions. Drawing from 82 studies, it identifies major gaps in psychometric validity and contextual adaptability. Most workload scales were found to be task-specific and poorly correlated with objective measures such as patient census or acuity. Recommendations include development of multi-dimensional tools aligned with real-time EHR and human-factors data streams.
+            </div>
+            <a href="https://doi.org/10.1093/intqhc/mzaf085" class="pub-link" target="_blank">View Publication →</a>
+          </div>
+
+          <div class="publication-item" data-year="2025" data-type="journal">
+            <div class="pub-authors">Liu, D., Hegde, S., & Ehrett, C.</div>
+            <div class="pub-title">Leveraging large language models for systems-based learning from hospital incident reports</div>
+            <div class="pub-journal">Authorea Preprints <span class="pub-year">2025</span></div>
+            <div class="pub-abstract">
+              This preprint introduces a framework using open-source LLMs to extract systems-level insights from hospital incident-report narratives. The approach classifies reports by contributing factors (communication, workflow, technology) and clusters them using semantic embeddings to surface recurrent safety themes. Preliminary evaluation against expert-coded datasets shows promising recall for multi-label categorization. The method supports scalable, automated learning from large repositories of free-text safety reports.
+            </div>
+            <a href="https://doi.org/10.22541/au.17200000" class="pub-link" target="_blank">View Publication →</a>
+          </div>
+
+          <div class="publication-item" data-year="2025" data-type="journal">
+            <div class="pub-authors">Liu, D., Ehrett, C., Hegde, S., & Andre, K.</div>
+            <div class="pub-title">Leveraging open-source large language models for data augmentation to improve text classification in surveys of medical staff</div>
+            <div class="pub-journal">JMIR Preprints <span class="pub-year">2025</span></div>
+            <div class="pub-abstract">
+              This preprint expands on prior work evaluating LLM-driven data augmentation for healthcare surveys. It demonstrates that augmenting training corpora with synthetic yet context-faithful responses improves BERT-based text-classification accuracy by 15–20%. The mixed-methods evaluation combines quantitative model benchmarking with qualitative expert validation, emphasizing ethical and practical considerations for LLM deployment in healthcare analytics.
+            </div>
+            <a href="https://preprints.jmir.org/preprint/51433" class="pub-link" target="_blank">View Publication →</a>
+          </div>
+
+          <div class="publication-item" data-year="2025" data-type="conference">
+            <div class="pub-authors">Nazari, N., Hegde, S., et al.</div>
+            <div class="pub-title">Designing Provider-Patient Family Conversation Spaces in the Neuro-ICU</div>
+            <div class="pub-journal">IISE Conference <span class="pub-year">2025</span></div>
+            <div class="pub-abstract">
+              This study applies the SEIPS 2.0 (Systems Engineering Initiative for Patient Safety) framework to examine how systemic factors influence end-of-life and care transition conversations in neurological intensive care units. The research identifies design considerations for creating supportive physical and social environments that facilitate difficult conversations between healthcare providers, patients, and families. Findings provide practical recommendations for improving communication quality and family satisfaction during critical care transitions.
+            </div>
+          </div>
+
+          <div class="publication-item" data-year="2023" data-type="conference">
+            <div class="pub-authors">Sawant, S., Joshi, P. S., & Sawant, S.</div>
+            <div class="pub-title">Usability testing of healthcare devices: A review of current UX methods used for usability testing of healthcare devices</div>
+            <div class="pub-journal">Proceedings of the Human Factors and Ergonomics Society Annual Meeting, 67(1), 1458-1462 <span class="pub-year">2023</span></div>
+            <div class="pub-abstract">
+              This paper reviews existing user-experience (UX) methods applied in healthcare device usability testing, highlighting gaps in aligning human-factors principles with real-world medical workflows. Through a structured review of peer-reviewed studies and regulatory guidelines (FDA, ISO 62366), the analysis identifies trends in formative and summative testing practices, task-based evaluations, and metrics for effectiveness, efficiency, and satisfaction. Findings show that while healthcare usability testing often emphasizes error reduction and compliance, fewer studies examine cognitive workload and recovery from use errors. The paper concludes with recommendations for integrating contextual inquiry and simulation-based testing to improve safety and usability outcomes in healthcare technology design.
+            </div>
+            <a href="https://journals.sagepub.com/doi/10.1177/21695067231192409" class="pub-link" target="_blank">View Publication →</a>
+          </div>
+
+          <div class="publication-item" data-year="2022" data-type="conference">
+            <div class="pub-authors">Sawant, S., Joshi, P. S., Chavan, D., & Sawant, S.</div>
+            <div class="pub-title">Evaluation of the content quality of YouTube videos as a source of information on Omicron symptoms and prevention</div>
+            <div class="pub-journal">Proceedings of the Human Factors and Ergonomics Society Annual Meeting, 66(1), 1835-1840 <span class="pub-year">2022</span></div>
+            <div class="pub-abstract">
+              This study evaluates the reliability and quality of YouTube videos disseminating information on Omicron variant symptoms and preventive measures. A systematic search retrieved 120 videos, screened and rated using the DISCERN and Global Quality Scoring tools. Results show that only 28% of videos provided medically accurate information, while 46% contained partial or misleading statements. Videos produced by healthcare professionals scored significantly higher than those by independent creators (p < 0.01). The findings underline the need for stronger content verification and health communication strategies on social media platforms, as public reliance on user-generated content increases during pandemics.
+            </div>
+            <a href="https://journals.sagepub.com/doi/10.1177/1071181322661245" class="pub-link" target="_blank">View Publication →</a>
+          </div>
+
+          <div class="publication-item" data-year="2024" data-type="journal">
+            <div class="pub-authors">Ehrett, C., Hegde, S., Andre, K., Liu, D., Wilson, T.</div>
+            <div class="pub-title">Leveraging Open-Source Large Language Models for Data Augmentation in Hospital Staff Surveys: Mixed Methods Study</div>
+            <div class="pub-journal">JMIR Medical Education <span class="pub-year">2024</span></div>
+            <div class="pub-abstract">
+              This study explores the application of open-source large language models (LLMs) including LLaMA and Alpaca for augmenting qualitative data from hospital staff surveys. The research demonstrates how AI-based data augmentation techniques can enhance the analysis of healthcare workforce feedback, providing valuable insights for improving hospital operations and staff well-being while maintaining data privacy and quality standards.
+            </div>
+            <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC11590755/" class="pub-link" target="_blank">View Publication →</a>
+          </div>
+
+          <div class="publication-item" data-year="2023" data-type="journal">
+            <div class="pub-authors">Foster, S., Hegde, S., O'Brien, T.C., Tucker, E.L.</div>
+            <div class="pub-title">Organizational Adaptive Capacity During a Large-Scale Surprise Event: A Case Study at an Academic Institution During the COVID-19 Pandemic</div>
+            <div class="pub-journal">IISE Transactions on Occupational Ergonomics and Human Factors, 11(1-2), 32-47 <span class="pub-year">2023</span></div>
+            <div class="pub-abstract">
+              This case study examines how Clemson University demonstrated organizational adaptive capacity during the COVID-19 pandemic. The research analyzes the university's response strategies, decision-making processes, and operational adjustments during this unprecedented surprise event. Findings provide insights into how large institutions can build resilience and maintain operations during major disruptions, offering valuable lessons for organizational preparedness and adaptation.
+            </div>
+          </div>
+
+          <div class="publication-item" data-year="2023" data-type="journal">
+            <div class="pub-authors">Tanhaeean, M., Nazari, N., Iranmanesh, S.H., Abdollahzade, M.</div>
+            <div class="pub-title">Analyzing factors contributing to COVID-19 mortality in the United States using artificial intelligence techniques</div>
+            <div class="pub-journal">Risk Analysis <span class="pub-year">2023</span></div>
+            <div class="pub-abstract">
+              This comprehensive study employs artificial intelligence and machine learning techniques to analyze factors contributing to COVID-19 mortality rates across the United States. The research develops predictive models that identify key demographic, healthcare system, and socioeconomic variables associated with COVID-19 outcomes. By utilizing AI-based frameworks, the study provides insights into mortality risk factors and helps inform public health strategies for pandemic response and resource allocation.
+            </div>
+            <a href="https://onlinelibrary.wiley.com/doi/abs/10.1111/risa.14033" class="pub-link" target="_blank">View Publication →</a>
+          </div>
+
+          <div class="publication-item" data-year="2023" data-type="journal">
+            <div class="pub-authors">Meng, L., Dong, Z. S., & Liu, D.</div>
+            <div class="pub-title">Ridesharing evacuation models of disaster response</div>
+            <div class="pub-journal">Computers & Industrial Engineering, 184, 109565 <span class="pub-year">2023</span></div>
+            <div class="pub-abstract">
+              The paper formulates an optimization model integrating ridesharing dynamics into urban disaster-evacuation planning. By incorporating vehicle-capacity constraints, pickup-drop-off coordination, and stochastic demand, the model minimizes total evacuation time under resource scarcity. Computational experiments on real-world city networks show that ridesharing can improve evacuation efficiency by up to 22% compared to private-vehicle scenarios. The framework provides guidance for emergency management agencies seeking collaborative mobility solutions.
+            </div>
+            <a href="https://doi.org/10.1016/j.cie.2023.109565" class="pub-link" target="_blank">View Publication →</a>
+          </div>
+
+          <div class="publication-item" data-year="2022" data-type="journal">
+            <div class="pub-authors">Liu, D., Ding, W., Dong, Z.S., Pedrycz, W.</div>
+            <div class="pub-title">Optimizing deep neural networks to predict the effect of social distancing on COVID-19 spread</div>
+            <div class="pub-journal">Computers & Industrial Engineering, 166 <span class="pub-year">2022</span></div>
+            <div class="pub-abstract">
+              This research applies advanced deep learning techniques to predict COVID-19 transmission patterns based on social distancing measures. Using county-level data from across the United States (603,456 data points), the study develops optimized neural network models that analyze the relationship between mobility patterns, social distancing metrics, and daily COVID-19 case counts. The findings provide evidence-based insights into the effectiveness of non-pharmaceutical interventions and support public health policy decisions during pandemic response.
+            </div>
+            <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC9757984/" class="pub-link" target="_blank">View Publication →</a>
+          </div>
+
+          <div class="publication-item" data-year="2022" data-type="journal">
+            <div class="pub-authors">Liu, D., Dong, Z. S., & Qiu, G.</div>
+            <div class="pub-title">Exploring the contagion effect of social media on mass shootings</div>
+            <div class="pub-journal">Computers & Industrial Engineering, 172, 108565 <span class="pub-year">2022</span></div>
+            <div class="pub-abstract">
+              This paper analyzes how online attention dynamics contribute to the temporal clustering of mass-shooting incidents. Using large-scale Twitter and Reddit data, a contagion-inspired model quantifies the amplification effects of social-media coverage on subsequent event probability. Findings reveal a statistically significant relationship between spikes in online discussion and short-term increases in incident likelihood, suggesting that information diffusion mechanisms can influence behavioral contagion. Policy implications are discussed regarding media reporting and content moderation.
+            </div>
+            <a href="https://doi.org/10.1016/j.cie.2022.108565" class="pub-link" target="_blank">View Publication →</a>
+          </div>
+
+          <div class="publication-item" data-year="2021" data-type="conference">
+            <div class="pub-authors">O'Brien, T.C., Foster, S., Tucker, E.L., Hegde, S.</div>
+            <div class="pub-title">COVID Response: A Blended Approach to Studying Sanitizer Station Deployment at a Large Public University</div>
+            <div class="pub-journal">Conference Proceedings <span class="pub-year">2021</span></div>
+            <div class="pub-abstract">
+              This study presents a mixed-methods approach to optimizing hand sanitizer station placement across Clemson University's campus during the COVID-19 pandemic. Combining spatial analysis, usage data, and human factors considerations, the research provides practical guidance for infrastructure deployment in support of public health measures during pandemic response.
+            </div>
+          </div>
+
+          <div class="publication-item" data-year="accepted" data-type="journal">
+            <div class="pub-authors">Sharkey, T.C., Foster, S., Hegde, S., Kurz, M.E., Tucker, E.L.</div>
+            <div class="pub-title">A Categorization of Observed Uses of Operational Research Models for Fundamental Surprise Events: Observations from University Operations during COVID-19</div>
+            <div class="pub-journal">Journal of the Operational Research Society <span class="pub-year">Accepted</span></div>
+            <div class="pub-abstract">
+              This paper categorizes how operational research models were applied during the COVID-19 pandemic at university settings. The research documents real-world applications of OR techniques for managing fundamental surprise events, including resource allocation, capacity planning, and operational decision-making. The findings provide a framework for understanding how analytical models can support institutional responses to unexpected large-scale disruptions.
+            </div>
+          </div>
+
+          <div class="publication-item" data-year="accepted" data-type="journal">
+            <div class="pub-authors">Saurin, T., Patriarca, R., Hegde, S., Rayo, M.</div>
+            <div class="pub-title">The influence of digital technologies on resilient performance: contributions, drawbacks, and a research agenda</div>
+            <div class="pub-journal">Applied Ergonomics <span class="pub-year">Accepted</span></div>
+            <div class="pub-abstract">
+              This collaborative research examines the dual role of digital technologies in supporting and potentially hindering resilient performance in complex systems. The paper synthesizes current understanding of how automation, AI, and digital tools influence human adaptive capacity, identifying both opportunities and challenges. The authors propose a comprehensive research agenda for better integrating digital technologies with resilience engineering principles.
+            </div>
+          </div>
+
+        </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap">
+      <p><strong>Adaptive Systems Laboratory (APEX Lab)</strong></p>
+      <p>Advisor: Dr. Sudeep Hegde | Department of Industrial Engineering | Clemson University</p>
+      <p>© <span id="year"></span> APEX Lab. All Rights Reserved.</p>
+    </div>
+  </footer>
+
+  <script>
+    // Set current year in footer
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // Filter functionality
+    const yearFilter = document.getElementById('yearFilter');
+    const typeFilter = document.getElementById('typeFilter');
+    const searchFilter = document.getElementById('searchFilter');
+    const publicationItems = document.querySelectorAll('.publication-item');
+    const resultsCount = document.getElementById('resultsCount');
+
+    function applyFilters() {
+      const yearValue = yearFilter.value;
+      const typeValue = typeFilter.value;
+      const searchValue = searchFilter.value.toLowerCase();
+      
+      let visibleCount = 0;
+
+      publicationItems.forEach(item => {
+        const itemYear = item.getAttribute('data-year');
+        const itemType = item.getAttribute('data-type');
+        const itemText = item.textContent.toLowerCase();
+
+        // Check all filter conditions
+        const yearMatch = yearValue === 'all' || itemYear === yearValue;
+        const typeMatch = typeValue === 'all' || itemType === typeValue;
+        const searchMatch = searchValue === '' || itemText.includes(searchValue);
+
+        if (yearMatch && typeMatch && searchMatch) {
+          item.classList.remove('hidden');
+          visibleCount++;
+        } else {
+          item.classList.add('hidden');
+        }
+      });
+
+      // Update results count
+      resultsCount.textContent = `Showing ${visibleCount} of ${publicationItems.length} publications`;
+    }
+
+    function resetFilters() {
+      yearFilter.value = 'all';
+      typeFilter.value = 'all';
+      searchFilter.value = '';
+      applyFilters();
+    }
+
+    // Add event listeners
+    yearFilter.addEventListener('change', applyFilters);
+    typeFilter.addEventListener('change', applyFilters);
+    searchFilter.addEventListener('input', applyFilters);
+
+    // Initial count display
+    applyFilters();
+  </script>
+</body>
+</html>
